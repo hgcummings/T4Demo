@@ -1,0 +1,12 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ include file="../EnumGen.t4" #>
+<#@ assembly name="System.Core" #>
+<#
+string[] properties = {
+    "Started",
+    "Completed",
+    "Error"
+};
+
+GenerateEnum(properties);
+#>

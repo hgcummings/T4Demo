@@ -1,0 +1,58 @@
+﻿<#@ import namespace="System.IO" #>
+<#+
+  void GenerateEnum(string[] properties) {
+    ClearOutput(); // Clear any spurious leading newlines
+    GenerateJs(properties);
+    SaveOutput("../Scripts/Enums/{0}.js");
+    ClearOutput();
+    GenerateCs(properties);
+  }
+
+  void GenerateCs(string[] properties)
+  {
+#>
+public enum <#=Path.GetFileNameWithoutExtension(Host.TemplateFile)#> {
+<#+
+    for (var i = 1; i <= properties.Length; ++i)
+    {
+#>
+  <#=properties[i-1] #> = <#=i#><#=i==properties.Length?"":","#>
+<#+
+    }
+#>
+}
+<#+
+  }
+
+  void GenerateJs(string[] properties)
+  {
+#>
+const <#=Path.GetFileNameWithoutExtension(Host.TemplateFile)#> = Object.freeze({
+<#+
+    for (var i = 1; i <= properties.Length; ++i)
+    {
+#>
+  <#=properties[i-1].ToUpper() #>: <#=i#><#=i==properties.Length?"":","#>
+<#+
+    }
+#>
+});
+<#+
+  }
+
+  void ClearOutput()
+  {
+      GenerationEnvironment.Clear();
+  }
+
+  void SaveOutput(string relativePathTemplate)
+  {
+      string directory = Path.GetDirectoryName(Host.TemplateFile);
+      string outputFilePath = Path.Combine(
+          directory,
+          String.Format(
+              relativePathTemplate,
+              Path.GetFileNameWithoutExtension(Host.TemplateFile)));
+      File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString());
+  }
+#>
